@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>SOA-REST</title>
+</head>
+
+
+<body>
+	NRP: <input type="text" id="nrp"><br>
+	Name: <input type="text" id="nama"><br>
+	<button type="button" id="post-btn">Post</button><br>
+
+	NRP: <input type="text" id="nrp_delete"><br>
+	<button type="button" id="del-btn">Delete</button><br>
+
+	NRP: <input type="text" id="nrp_update"><br>
+	Name: <input type="text" id="name_update"><br>
+	<button type="button" id="upd-btn">Update</button>
+
+	<ul id="user-list">
+		
+	</ul>
+
+	<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
+	<script>
+
+		function load(){
+			$("#user-list").html("");
+			$.ajax({
+				url: '/api/user',
+				method: 'GET',
+				success: function(data){
+					data.forEach(function(value,index){
+						var item='<li>'+value['nrp']+ ' - '+ value['nama'] +'</li>';
+						$('#user-list').append(item);
+					});
+				}
+			});
+		}
+
+		$(document).ready(function(){
+			load();
+			$("#post-btn").click(function(){
+				alert("clicked");
+				var send_data = {
+					'nrp' : $("#nrp").val(),
+					'nama' : $("#nama").val()
+				};
+
+				$.ajax({
+					url:'/api/user',
+					headers:{
+						'Content-Type':'application/json'
+					},
+					method:'POST',
+					data: JSON.stringify(send_data),
+					success:function(data){
+						if(data['err'] == 0){
+							load();
+						}else{
+							
+						}
+					}
+				});
+			});
+			$("#del-btn").click(function(){
+				alert("del-click");
+				var send_data={
+					'nrp': $("#nrp_delete").val()
+				};
+
+				$.ajax({
+					url:'/api/user/'+$("#nrp_delete").val(),
+					headers:{
+						'Content-Type':'application/json'
+					},
+					method:'DELETE',
+					data: JSON.stringify(send_data),
+					success:function(data){
+						if(data['err'] == 0){
+							load();
+						}else{
+							
+						}
+					}
+				});
+			});
+
+			$("#upd-btn").click(function(){
+				alert("upd-click");
+				var send_data={
+					'nama' : $("#name_update").val()
+				};
+
+				$.ajax({
+					url:'/api/user/'+$("#nrp_update").val(),
+					headers:{
+						'Content-Type':'application/json'
+					},
+					method:'PUT',
+					data: JSON.stringify(send_data),
+					success:function(data){
+						alert(data['msg']);
+						if(data['err'] == 0){
+							load();
+						}else{
+							
+						}
+					}
+				});
+			});
+		});	
+	</script>
+
+</body>
+</html>
