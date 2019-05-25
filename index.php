@@ -7,11 +7,13 @@ require 'database.php';
 
 $app = new \Slim\App;
 
-$app->get('/api/user',function(Request $request, Response $response, array $args){
+//CRUD user
+$app->get('/user/{id}',function(Request $request, Response $response, array $args){
 	global $con;
 
 	$data = [];
-	$sql = "SELECT * FROM mahasiswa";
+	$id = $args['id'];
+	$sql = "SELECT * FROM user WHERE id=".$id;
 	$res = mysqli_query($con,$sql);
 
 	while($row = mysqli_fetch_assoc($res)){
@@ -27,31 +29,7 @@ $app->get('/api/user',function(Request $request, Response $response, array $args
 	return $response;
 });
 
-$app->get('/api/user/{nrp}', function (Request $request, Response $response, array $args) {
-    global $con;
-
-    
-    $nrp = $args['nrp'];
-   	$sql = "SELECT * FROM mahasiswa WHERE nrp = ".$nrp;
-	$res = mysqli_query($con,$sql);
-
-	while($row = mysqli_fetch_assoc($res)){
-		$data[] = $row;
-	}
-
-    
-    //Set Header
-	$response=$response->withHeader('Content-Type','application/json');
-
-	//Set Body
-	$response->getBody()->write(json_encode($data));
-
-	return $response;
-});
-
-
-
-$app->post('/api/user', function(Request $request, Response $response, array $args){
+$app->post('/user', function(Request $request, Response $response, array $args){
 	global $con;
 
 	$obj = $request->getParsedBody();
@@ -61,7 +39,7 @@ $app->post('/api/user', function(Request $request, Response $response, array $ar
 	);
 
 	// Insert to Database
-	$sql = "INSERT INTO mahasiswa VALUES(default,".$obj['nrp'].", '".$obj['nama']."')";
+	$sql = "INSERT INTO user VALUES(default, '".$obj['email']."', '".$obj['password']."', '".$obj['name']."')";
 	$res = mysqli_query($con,$sql);
 
 	if(!$res){
@@ -77,7 +55,7 @@ $app->post('/api/user', function(Request $request, Response $response, array $ar
 
 });
 
-$app->delete('/api/user/{nrp}', function(Request $request, Response $response, array $args){
+$app->delete('/user/{id}', function(Request $request, Response $response, array $args){
 	global $con;
 
 	$obj = $request->getParsedBody();
@@ -87,7 +65,7 @@ $app->delete('/api/user/{nrp}', function(Request $request, Response $response, a
 	);
 
 	//Delete from database
-	$sql = "DELETE FROM mahasiswa WHERE nrp=".$args['nrp'];
+	$sql = "DELETE FROM user WHERE id=".$args['id'];
 	$res = mysqli_query($con,$sql);
 
 	if(!$res){
