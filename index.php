@@ -39,7 +39,7 @@ $app->post('/user', function(Request $request, Response $response, array $args){
 	);
 
 	// Insert to Database
-	$sql = "INSERT INTO user VALUES(default, '".$obj['email']."', '".$obj['password']."', '".$obj['name']."')";
+	$sql = "INSERT INTO user VALUES(default, '".$obj['name']."', '".$obj['birthdate']."', '".$obj['gender']."', '".$obj['email']."', '".$obj['address']."', '".$obj['username']."', '".$obj['password']."')";
 	$res = mysqli_query($con,$sql);
 
 	if(!$res){
@@ -80,7 +80,7 @@ $app->delete('/user/{id}', function(Request $request, Response $response, array 
 	return $response;
 });
 
-$app->put('/api/user/{nrp}', function(Request $request, Response $response, array $args){
+$app->put('/user/{id}', function(Request $request, Response $response, array $args){
 	global $con;
 
 	$obj = $request->getParsedBody();
@@ -90,7 +90,8 @@ $app->put('/api/user/{nrp}', function(Request $request, Response $response, arra
 	);
 
 	//Update from database
-	$sql = "UPDATE mahasiswa SET nama='".$obj['nama']."' WHERE nrp LIKE ".$args['nrp'];
+	$sql = "UPDATE user SET nama='".$obj['name']."', birthdate='".$obj['birtdate']."', gender='".$obj['gender']."', email='".$obj['email']."', address='".$obj['address']."', username='".$obj['username']."', password='".$obj['password']."' WHERE id_user = ".$args['id'];
+
 	$res = mysqli_query($con,$sql);
 
 	if(!$res){
@@ -106,27 +107,17 @@ $app->put('/api/user/{nrp}', function(Request $request, Response $response, arra
 	return $response;
 });
 
-$app->get('/api/barang',function(Request $request, Response $response, array $args){
+$app->get('/payment_billing/{id_user}',function(Request $request, Response $response, array $args){
 	global $con;
 
+	$data = [];
+	$id = $args['id_user'];
+	$sql = "SELECT * FROM billing WHERE id=".$id;
+	$res = mysqli_query($con,$sql);
 
-	$data = [
-		array(
-			'id' => '1',
-			'nama' => 'Nuka Cola',
-			'quantity' => '25'
-		),
-		array(
-			'id' => '2',
-			'nama' => 'Bottlecaps',
-			'quantity' => '500'
-		),
-		array(
-			'id' => '3',
-			'nama' => 'Stimpacks',
-			'quantity' => '15'
-		),
-	];
+	while($row = mysqli_fetch_assoc($res)){
+		$data[] = $row;
+	}
 
 	//Set Header
 	$response=$response->withHeader('Content-Type','application/json');
@@ -137,44 +128,30 @@ $app->get('/api/barang',function(Request $request, Response $response, array $ar
 	return $response;
 });
 
-$app->get('/api/barang/{id}',function(Request $request, Response $response, array $args){
-	$id = $args['id'];
-	//Set Header
-	
+$app->post('/payment_billing/', function(Request $request, Response $response, array $args){
+	global $con;
 
-	$data = [
-		array(
-			'id' => '1',
-			'nama' => 'Nuka Cola',
-			'quantity' => '25'
-		),
-		array(
-			'id' => '2',
-			'nama' => 'Bottlecaps',
-			'quantity' => '500'
-		),
-		array(
-			'id' => '3',
-			'nama' => 'Stimpacks',
-			'quantity' => '15'
-		),
-	];
+	$obj = $request->getParsedBody();
+	$status = array(
+		'err' => 0,
+		'msg' => ''
+	);
 
-	$res=[];
-	foreach ($data as $key) {
-		if($key['id'] == $id){
-			//$response->getBody()->write(json_encode($key));
-			$res = $key;
-		}
+	// Insert to Database
+	$sql = "INSERT INTO billing VALUES(default, '".$obj['name']."', '".$obj['birthdate']."', '".$obj['gender']."', '".$obj['email']."', '".$obj['address']."', '".$obj['username']."', '".$obj['password']."')";
+	$res = mysqli_query($con,$sql);
+
+	if(!$res){
+		$status['err'] = 1;
+		$status['msg'] = "Cannot insert to database";
 	}
 
-	//Set Header
 	$response=$response->withHeader('Content-Type','application/json');
 
-	//Set Body
-	$response->getBody()->write(json_encode($res));
+	$response->getBody()->write(json_encode($status));
 
 	return $response;
+
 });
 
 
