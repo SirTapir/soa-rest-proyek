@@ -7,8 +7,8 @@ require 'database.php';
 
 $app = new \Slim\App;
 
-//CRUD user
-$app->get('/user/{id}',function(Request $request, Response $response, array $args){
+//Get user by ID
+$app->get('/api/user/{id}',function(Request $request, Response $response, array $args){
 	global $con;
 
 	$data = [];
@@ -29,58 +29,54 @@ $app->get('/user/{id}',function(Request $request, Response $response, array $arg
 	return $response;
 });
 
-$app->post('/user', function(Request $request, Response $response, array $args){
+//Get PDAM data
+$app->get('/api/billing_pdam/{id}', function(Request $request, Response $response, array $args){
 	global $con;
 
-	$obj = $request->getParsedBody();
-	$status = array(
-		'err' => 0,
-		'msg' => ''
-	);
-
-	// Insert to Database
-	$sql = "INSERT INTO user VALUES(default, '".$obj['name']."', '".$obj['username']."', '".$obj['password']."')";
+	$data = [];
+	$id = $args['id'];
+	$sql = "SELECT * FROM pdam WHERE user_id=".$id;
 	$res = mysqli_query($con,$sql);
 
-	if(!$res){
-		$status['err'] = 1;
-		$status['msg'] = "Cannot insert to database";
+	while($row = mysqli_fetch_assoc($res)){
+		$data[] = $row;
 	}
 
+	//Set Header
 	$response=$response->withHeader('Content-Type','application/json');
 
-	$response->getBody()->write(json_encode($status));
+	//Set Body
+	$response->getBody()->write(json_encode($data));
 
 	return $response;
 
 });
 
-$app->delete('/user/{id}', function(Request $request, Response $response, array $args){
+//Get PLN data
+$app->get('/api/billing_pln/{id}', function(Request $request, Response $response, array $args){
 	global $con;
 
-	$obj = $request->getParsedBody();
-	$status = array(
-		'err' => 0,
-		'msg' => ''
-	);
-
-	//Delete from database
-	$sql = "DELETE FROM user WHERE id=".$args['id'];
+	$data = [];
+	$id = $args['id'];
+	$sql = "SELECT * FROM pln WHERE user_id=".$id;
 	$res = mysqli_query($con,$sql);
 
-	if(!$res){
-		$status['err'] = 1;
-		$status['msg'] = "Cannot delete";
+	while($row = mysqli_fetch_assoc($res)){
+		$data[] = $row;
 	}
 
+	//Set Header
 	$response=$response->withHeader('Content-Type','application/json');
 
-	$response->getBody()->write(json_encode($status));
+	//Set Body
+	$response->getBody()->write(json_encode($data));
 
 	return $response;
+
 });
 
-$app->put('/user/{id}', function(Request $request, Response $response, array $args){
+//Update PDAM billing date
+$app->put('/api/billing_pdam/{id}', function(Request $request, Response $response, array $args){
 	global $con;
 
 	$obj = $request->getParsedBody();
@@ -90,7 +86,7 @@ $app->put('/user/{id}', function(Request $request, Response $response, array $ar
 	);
 
 	//Update from database
-	$sql = "UPDATE user SET nama='".$obj['name']."', username='".$obj['username']."', password='".$obj['password']."' WHERE id_user = ".$args['id'];
+	$sql = "UPDATE pdam SET status='".$obj['status']."' WHERE id_user = ".$args['id'];
 
 	$res = mysqli_query($con,$sql);
 
@@ -107,49 +103,8 @@ $app->put('/user/{id}', function(Request $request, Response $response, array $ar
 	return $response;
 });
 
-$app->get('/billing_pdam/{id_user}',function(Request $request, Response $response, array $args){
-	global $con;
-
-	$data = [];
-	$id = $args['id_user'];
-	$sql = "SELECT * FROM pdam WHERE user_id=".$id;
-	$res = mysqli_query($con,$sql);
-
-	while($row = mysqli_fetch_assoc($res)){
-		$data[] = $row;
-	}
-
-	//Set Header
-	$response=$response->withHeader('Content-Type','application/json');
-
-	//Set Body
-	$response->getBody()->write(json_encode($data));
-
-	return $response;
-});
-
-$app->get('/billing_pln/{id_user}',function(Request $request, Response $response, array $args){
-	global $con;
-
-	$data = [];
-	$id = $args['id_user'];
-	$sql = "SELECT * FROM pln WHERE user_id=".$id;
-	$res = mysqli_query($con,$sql);
-
-	while($row = mysqli_fetch_assoc($res)){
-		$data[] = $row;
-	}
-
-	//Set Header
-	$response=$response->withHeader('Content-Type','application/json');
-
-	//Set Body
-	$response->getBody()->write(json_encode($data));
-
-	return $response;
-});
-
-$app->post('/payment_billing/', function(Request $request, Response $response, array $args){
+//Update PLN billing date
+$app->put('/api/billing_pln/{id}', function(Request $request, Response $response, array $args){
 	global $con;
 
 	$obj = $request->getParsedBody();
@@ -158,13 +113,15 @@ $app->post('/payment_billing/', function(Request $request, Response $response, a
 		'msg' => ''
 	);
 
-	// Insert to Database
-	$sql = "INSERT INTO billing VALUES(default, '".$obj['name']."', '".$obj['birthdate']."', '".$obj['gender']."', '".$obj['email']."', '".$obj['address']."', '".$obj['username']."', '".$obj['password']."')";
+	//Update from database
+	$sql = "UPDATE pln SET status='".$obj['status']."' WHERE id_user = ".$args['id'];
+
 	$res = mysqli_query($con,$sql);
 
 	if(!$res){
 		$status['err'] = 1;
-		$status['msg'] = "Cannot insert to database";
+		//$status['msg'] = "Cannot update";
+		$status['msg'] = $sql;
 	}
 
 	$response=$response->withHeader('Content-Type','application/json');
@@ -172,9 +129,36 @@ $app->post('/payment_billing/', function(Request $request, Response $response, a
 	$response->getBody()->write(json_encode($status));
 
 	return $response;
-
 });
 
+//Send payment data
+$app->post('/api/payment_billing', function(Request $request, Response $response, array $args){
+	global $con;
+    $obj = $request->getParsedBody();
+    $status = array(
+        'err' => 0,
+        'msg' => ''
+    );
 
+    //table name assumption: invoice
+    //PDAM
+    $sql = "INSERT INTO invoice VALUES(default, ".$obj['user_id'].", 'pdam', '".$obj['status']."')";
+    $res = mysqli_query($con, $sql);
+
+    //PLN
+    $sql = "INSERT INTO invoice VALUES(default, ".$obj['user_id'].", 'pln', '".$obj['status']."')";
+    $res = mysqli_query($con, $sql);
+
+    if(!$res){
+        $status['err'] = 1;
+        $status['msg'] = 'cannot insert to database';
+    }
+
+    $response = $response->withHeader('Content-type', 'application/json');
+
+    $response->getBody()->write(json_encode($status));
+
+    return $response;
+});
 
 $app->run();
