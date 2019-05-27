@@ -13,7 +13,7 @@ $app->get('/api/user/{id}',function(Request $request, Response $response, array 
 
 	$data = [];
 	$id = $args['id'];
-	$sql = "SELECT * FROM user WHERE id=".$id;
+	$sql = "SELECT * FROM user WHERE id_user=".$id;
 	$res = mysqli_query($con,$sql);
 
 	while($row = mysqli_fetch_assoc($res)){
@@ -86,7 +86,7 @@ $app->put('/api/billing_pdam/{id}', function(Request $request, Response $respons
 	);
 
 	//Update from database
-	$sql = "UPDATE pdam SET status='".$obj['status']."' WHERE id_user = ".$args['id'];
+	$sql = "UPDATE pdam SET status='".$obj['status']."' WHERE user_id = ".$args['id'];
 
 	$res = mysqli_query($con,$sql);
 
@@ -114,7 +114,7 @@ $app->put('/api/billing_pln/{id}', function(Request $request, Response $response
 	);
 
 	//Update from database
-	$sql = "UPDATE pln SET status='".$obj['status']."' WHERE id_user = ".$args['id'];
+	$sql = "UPDATE pln SET status='".$obj['status']."' WHERE user_id = ".$args['id'];
 
 	$res = mysqli_query($con,$sql);
 
