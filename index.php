@@ -39,7 +39,7 @@ $app->post('/user', function(Request $request, Response $response, array $args){
 	);
 
 	// Insert to Database
-	$sql = "INSERT INTO user VALUES(default, '".$obj['name']."', '".$obj['birthdate']."', '".$obj['gender']."', '".$obj['email']."', '".$obj['address']."', '".$obj['username']."', '".$obj['password']."')";
+	$sql = "INSERT INTO user VALUES(default, '".$obj['name']."', '".$obj['username']."', '".$obj['password']."')";
 	$res = mysqli_query($con,$sql);
 
 	if(!$res){
@@ -90,7 +90,7 @@ $app->put('/user/{id}', function(Request $request, Response $response, array $ar
 	);
 
 	//Update from database
-	$sql = "UPDATE user SET nama='".$obj['name']."', birthdate='".$obj['birtdate']."', gender='".$obj['gender']."', email='".$obj['email']."', address='".$obj['address']."', username='".$obj['username']."', password='".$obj['password']."' WHERE id_user = ".$args['id'];
+	$sql = "UPDATE user SET nama='".$obj['name']."', username='".$obj['username']."', password='".$obj['password']."' WHERE id_user = ".$args['id'];
 
 	$res = mysqli_query($con,$sql);
 
@@ -107,12 +107,33 @@ $app->put('/user/{id}', function(Request $request, Response $response, array $ar
 	return $response;
 });
 
-$app->get('/payment_billing/{id_user}',function(Request $request, Response $response, array $args){
+$app->get('/billing_pdam/{id_user}',function(Request $request, Response $response, array $args){
 	global $con;
 
 	$data = [];
 	$id = $args['id_user'];
-	$sql = "SELECT * FROM billing WHERE id=".$id;
+	$sql = "SELECT * FROM pdam WHERE user_id=".$id;
+	$res = mysqli_query($con,$sql);
+
+	while($row = mysqli_fetch_assoc($res)){
+		$data[] = $row;
+	}
+
+	//Set Header
+	$response=$response->withHeader('Content-Type','application/json');
+
+	//Set Body
+	$response->getBody()->write(json_encode($data));
+
+	return $response;
+});
+
+$app->get('/billing_pln/{id_user}',function(Request $request, Response $response, array $args){
+	global $con;
+
+	$data = [];
+	$id = $args['id_user'];
+	$sql = "SELECT * FROM pln WHERE user_id=".$id;
 	$res = mysqli_query($con,$sql);
 
 	while($row = mysqli_fetch_assoc($res)){
