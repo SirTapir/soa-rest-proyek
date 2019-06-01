@@ -142,11 +142,11 @@ $app->post('/api/payment_billing', function(Request $request, Response $response
 
     //table name assumption: invoice
     //PDAM
-    $sql = "INSERT INTO invoice VALUES(default, ".$obj['user_id'].", 'pdam', '".$obj['status']."')";
+    $sql = "INSERT INTO invoice VALUES(default, ".$obj['user_id'].", 'pdam', ".$obj['no_pdam'].","'Rp '.$obj['biaya'].",".$obj['tanggal'].",'".$obj['status']."')";
     $res = mysqli_query($con, $sql);
 
     //PLN
-    $sql = "INSERT INTO invoice VALUES(default, ".$obj['user_id'].", 'pln', '".$obj['status']."')";
+    $sql = "INSERT INTO invoice VALUES(default, ".$obj['user_id'].", 'pln', ".$obj['no_pln'].","'Rp '.$obj['biaya'].",".$obj['tanggal'].",'".$obj['status']."')";
     $res = mysqli_query($con, $sql);
 
     if(!$res){
