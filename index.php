@@ -58,6 +58,10 @@ $app->get('/api/billing_pdam/{id}/{meteranPDAM}', function(Request $request, Res
 	global $con;
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
 	$data = [];
 	$id = $args['id'];
 	$meteran = $args['meteranPDAM'];
@@ -81,6 +85,7 @@ $app->get('/api/billing_pdam/{id}/{meteranPDAM}', function(Request $request, Res
 
 //Get PLN data
 $app->get('/api/billing_pln/{id}/{meteranPLN}', function(Request $request, Response $response, array $args){
+<<<<<<< HEAD
 	global $con;
 
 	$data = [];
@@ -104,10 +109,13 @@ $app->get('/api/billing_pln/{id}/{meteranPLN}', function(Request $request, Respo
 });
 
 $app->get('/api/billing_pln/{id}', function(Request $request, Response $response, array $args){
+=======
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
 	global $con;
 
 	$data = [];
 	$id = $args['id'];
+<<<<<<< HEAD
 	$sql = "SELECT * FROM pln WHERE id=".$id;
 	$res = mysqli_query($con,$sql);
 
@@ -131,6 +139,10 @@ $app->get('/api/billing_pdam/{id}', function(Request $request, Response $respons
 	$data = [];
 	$id = $args['id'];
 	$sql = "SELECT * FROM pdam WHERE id=".$id;
+=======
+	$meteran = $args['meteranPLN'];
+	$sql = "SELECT * FROM pln WHERE no_pln=".$meteran." and user_id=".$id;
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
 	$res = mysqli_query($con,$sql);
 
 	while($row = mysqli_fetch_assoc($res)){

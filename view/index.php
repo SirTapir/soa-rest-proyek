@@ -1,6 +1,9 @@
 <?php
 	$id = $_GET["id"];
+<<<<<<< HEAD
 	$invoice_id = $_GET["invoice_id"];
+=======
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
 ?>
 <!DOCTYPE html>
 <html>
@@ -13,15 +16,26 @@
 	<link rel="stylesheet" href="styles.css">
 </head>
 <script>
+<<<<<<< HEAD
 	var siscoIP = 'http://192.168.0.126';
 	function load(){
   		document.getElementById("id").value = <?php echo $id; ?>;
   		
+=======
+	function load(){
+
+  		document.getElementById("id").value = <?php echo $id; ?>;
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
   		$("#pln").hide();
   		$("#pdam").show();
   	}
 </script>
 <body onload="load()">
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
 <nav class="navbar navbar-default navbar-static-top">
     <div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
@@ -228,14 +242,20 @@
 						},
 						method:'GET',
 						data: JSON.stringify(send_data),
+<<<<<<< HEAD
 						success:function(data){	
 							var foreign_id;
 							var total;
 							/*var item = '<thead><th>id</th><th>user_id</th><th>no_pdam</th><th>biaya</th><th>tanggal_invoice</th><th>tanggal_mulai</th><th>tanggal_akhir</th><th>status</th></thead>';
+=======
+						success:function(data){
+							var item = '<thead><th>id</th><th>user_id</th><th>no_pdam</th><th>biaya</th><th>tanggal_invoice</th><th>tanggal_mulai</th><th>tanggal_akhir</th><th>status</th></thead>';
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
 
 							data.forEach(function(value,index){
 								item += '<tbody><tr><td>'+value['id']+'</td><td>'+value['user_id']+ '</td><td>'+ value['no_pdam'] + '</td><td>'+ value['biaya'] + '</td><td>'+ value['tanggal_invoice'] + '</td><td>'+ value['tanggal_mulai'] + '</td><td>'+ value['tanggal_akhir'] + '</td><td>'+ value['status'] + '</tr></tbody>';
 								$('#user-list').append(item);
+<<<<<<< HEAD
 							});*/
 
 
@@ -265,6 +285,9 @@
 							})
 							
 
+=======
+							});
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
 						}
 					});
 				});
@@ -306,7 +329,10 @@
 							});*/
 
 							var no_meteran = data['no_pln'];
+<<<<<<< HEAD
 
+=======
+>>>>>>> 1082d7436797f430774b2a3dc5092fa8988be4a9
 							
 						}
 					});
